@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+  <head>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+    <link rel="stylesheet" type="text/css" href="https://js.api.here.com/v3/3.1/mapsjs-ui.css" />
+    <link rel="stylesheet" type="text/css" href="/static/demo.css" />
+    <link rel="stylesheet" type="text/css" href="/static/styles.css" />
+    <link rel="stylesheet" type="text/css" href="/static/template.css" />
+    <script type="text/javascript" src='/static/test-credentials.js'></script>
+    <script type="text/javascript" src="https://js.api.here.com/v3/3.1/mapsjs-core.js"></script>
+    <script type="text/javascript" src="https://js.api.here.com/v3/3.1/mapsjs-service.js"></script>
+    <script type="text/javascript" src="https://js.api.here.com/v3/3.1/mapsjs-ui.js"></script>
+    <script type="text/javascript" src="https://js.api.here.com/v3/3.1/mapsjs-mapevents.js"></script>
+  <script>window.ENV_VARIABLE = 'developer.here.com'</script><script src='../iframeheight.js'></script>
+
+    <title>Report Admin | View Reports</title>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="/static/scr_styles.css" >
+
+</head>
+  <body>
+    <nav class="navbar navbar-default navbar-static-top">
+      <div class="container">
+        <ul class="nav navbar-nav">
+{# Home Link / Admin Link / Register Link#}
+          <li><a class="navbar-brand" href="/">HOME</a></li>
+          {# Some logic on what to display for last item#}
+          {% if user.is_authenticated %}
+            {% if user.is_superuser %}
+              <li><a class="navbar-link" href="add_report_admin/">Add Report Admin</a></li>
+            {% else %}
+              <li><a class="navbar-link" href="viewreports/">Reports</a></li>
+            {% endif %}
+            <li><a href="{% url 'logout' %}">Logout</a></li>
+          {% else %}
+            <li><a class="navbar-link" href="admin/">Admin Login</a></li>
+            <li><a class="navbar-link" href="userlogin/">Report Admin Login</a></li>
+          {% endif %}
+</ul>
+      </div>
+    </nav>
+    <div class="container">
+    {% block body_block %}
+    {% endblock %}
+    </div>
+
+
+
+
+    <div id="markers-on-the-map">
+
+    <div id="map"></div>
+
+    <script type="text/javascript" src='/static/map_marking.js'></script>
+  </div>
+
+
+
+
+
+    <div class="container">
+      <div class="container_scr">
+      <table class="responsive-table">
+        <caption>Accident Reports</caption>
+        <thead>
+          <tr>
+            <th scope="col">No.</th>
+            <th scope="col">Location</th>
+            <th scope="col"></th>
+            <th scope="col">Reported On</th>
+            <th scope="col">Action</th>
+          </tr>
+        </thead>
+
+        <tbody>
+        {% if repsAccident %}
+          {% for rep in repsAccident %}<tr>
+              <th scope="row">{{ forloop.counter }}</th>
+              <td data-title="Location" class="td_locs_accident">({{rep.lat}}, {{rep.lon}}) </td>
+              <td data-title="LocationLabel">{{rep.locationLabel}}</td>
+              <td data-title="Reported On">{{ rep.time }}</td>
+              <td data-title="Action"><button value = "{{rep.id}}"><a href="/update_report_status/{{rep.id}}">Deactivate</a></buttom></td>
+            </tr>
+
+          {% endfor %}
+          {% else %}
+            <tr><td colspan="4"><b>Reports Not Found..!!!</b></td></tr>
+          {% endif %}
+        </tbody>
+      </table>
+      </div>
+
+
+
+
+        <div class="container_scr">
+        <table class="responsive-table">
+          <caption>Fire Reports</caption>
+          <thead>
+            <tr>
+              <th scope="col">No.</th>
+              <th scope="col">Location</th>
+              <th scope="col"></th>
+              <th scope="col">Reported On</th>
+              <th scope="col">Action</th>
+            </tr>
+          </thead>
+
+          <tbody>
+          {% if repsFire %}
+            {% for rep in repsFire %}<tr>
+                <th scope="row">{{ forloop.counter }}</th>
+                <td data-title="Location" class="td_locs_fire">({{rep.lat}}, {{rep.lon}}) </td>
+                <td data-title="LocationLabel">{{rep.locationLabel}}</td>
+                <td data-title="Reported On">{{ rep.time }}</td>
+                <td data-title="Action"><button value = "{{rep.id}}"><a href="/update_report_status/{{rep.id}}">Deactivate</a></buttom></td>
+              </tr>
+
+            {% endfor %}
+          {% else %}
+            <tr><td colspan="4"><b>Reports Not Found..!!!</b></td></tr>
+          {% endif %}
+          </tbody>
+        </table>
+        </div>
+
+
+
+          <div class="container_scr">
+          <table class="responsive-table">
+            <caption>Pothole Reports</caption>
+            <thead>
+              <tr>
+                <th scope="col">No.</th>
+                <th scope="col">Location</th>
+                <th scope="col"></th>
+                <th scope="col">Reported On</th>
+                <th scope="col">Action</th>
+              </tr>
+            </thead>
+
+            <tbody>
+            {% if repsPothole %}
+              {% for rep in repsPothole %}
+                <tr>
+                  <th scope="row">{{ forloop.counter }}</th>
+                  <td data-title="Location" class="td_locs_pothole">({{rep.lat}}, {{rep.lon}})</td>
+                  <td data-title="LocationLabel">{{rep.locationLabel}}</td>
+                  <td data-title="Reported On">{{ rep.time }}</td>
+                  <td data-title="Action"><button value = "{{rep.id}}"><a href="/update_report_status/{{rep.id}}">Deactivate</a></buttom></td>
+                </tr>
+
+              {% endfor %}
+            {% else %}
+              <tr><td colspan="4"><b>Reports Not Found..!!!</b></td></tr>
+            {% endif %}
+            </tbody>
+          </table>
+          </div>
+
+
+
+            <div class="container_scr">
+            <table class="responsive-table">
+              <caption>Trash Reports</caption>
+              <thead>
+                <tr>
+                  <th scope="col">No.</th>
+                  <th scope="col">Location</th>
+                  <th scope="col"></th>
+                  <th scope="col">Reported On</th>
+                  <th scope="col">Action</th>
+                </tr>
+              </thead>
+
+              <tbody>
+              {% if repsTrash %}
+                {% for rep in repsTrash %}
+                  <tr>
+                    <th scope="row">{{ forloop.counter }}</th>
+                    <td data-title="Location" class="td_locs_trash">({{rep.lat}}, {{rep.lon}})</td>
+                    <td data-title="LocationLabel">{{rep.locationLabel}}</td>
+                    <td data-title="Reported On">{{ rep.time }}</td>
+                    <td data-title="Action"><button value = "{{rep.id}}"><a href="/update_report_status/{{rep.id}}">Deactivate</a></buttom></td>
+                  </tr>
+
+                {% endfor %}
+                {% else %}
+                  <tr><td colspan="4"><b>Reports Not Found..!!!</b></td></tr>
+                {% endif %}
+              </tbody>
+            </table>
+            </div>
+
+
+
+    </div>
+
+
+
+
+
+
+
+
+
+  </body>
+</html>

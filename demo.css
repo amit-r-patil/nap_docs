@@ -1,0 +1,16 @@
+#map {
+    width: 80%;
+    height: 450px;
+    background: grey;
+    margin: auto
+}
+
+#panel {
+    width: 100%;
+    height: 400px;
+}
+
+#markers-on-the-map {
+  width: 50%auto;
+  align: center;
+}
